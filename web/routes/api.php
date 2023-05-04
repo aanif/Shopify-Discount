@@ -19,8 +19,10 @@ Route::get('/', function () {
     return "Hello API";
 });
 
-Route::get('/test',[ShopifyController::class, 'test']);
-Route::get('/test1',[ShopifyController::class, 'createCollection']);
-Route::get('/test2',[ShopifyController::class, 'getAllCollection']);
-Route::get('/test3',[ShopifyController::class, 'createPriceRule']);
-Route::get('/test4',[ShopifyController::class, 'test4']);
+Route::get('/product',[ShopifyController::class, 'getProducts']);//
+Route::post('/collection',[ShopifyController::class, 'createCollection']);//
+Route::get('/priceRule',[ShopifyController::class, 'getAllPriceRules']);//
+Route::get('/priceRule/{id}',[ShopifyController::class, 'getPriceRule']);//
+Route::post('/priceRule',[ShopifyController::class, 'createPriceRule']);//
+Route::put('/priceRule/{id}',[ShopifyController::class, 'updatePriceRule']);//
+Route::delete('/priceRule/{id}',[ShopifyController::class, 'deletePriceRule']);
