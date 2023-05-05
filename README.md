@@ -14,7 +14,7 @@ Few things need we need to make sure first in order to get the project setup is:
 `git clone git@github.com:aanif/Shopify-Discount.git`
 
 (before cloning make sure that you have been invited to the repo) 
-* run `cd Shopify-Discount` and then run `composer install`
+* run `cd Shopify-Discount/web` and then run `composer install`
 * next step is to setup the `.env` file for that run `cp .env.example .env` 
 
 # Shopify Developer Take Home Test | Backend/Fullstack
