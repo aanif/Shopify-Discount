@@ -1,21 +1,21 @@
 # Prerequesits for seting up the project
 
-Few need we need to make sure first in order to get the project setup is: 
+Few things need we need to make sure first in order to get the project setup is: 
 * You have composer installed.
-    * to check if it’s installed run composer -v
+    * to check if it’s installed run `composer -v`
     * if it’s not installed, follow the following instructions https://getcomposer.org/doc/00-intro.md
 * You have php8.0 installed 
-    * to check if it’s installed run php -v 
+    * to check if it’s installed run `php -v` 
     * if it’s not installed, follow the following instructions https://www.geeksforgeeks.org/how-to-install-php-on-macos/
 
 # Setting up the project
 
-* After that clone the project using following command
+* After that, clone the project using following command
 `git clone git@github.com:aanif/Shopify-Discount.git`
 
 (before cloning make sure that you have been invited to the repo) 
-* run cd Shopify-Discount and then run composer install
-* next step is to setup the .env file for that run cp .env.example .env 
+* run `cd Shopify-Discount` and then run `composer install`
+* next step is to setup the `.env` file for that run `cp .env.example .env` 
 
 # Shopify Developer Take Home Test | Backend/Fullstack
 
