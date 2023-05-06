@@ -20,12 +20,21 @@ import { ReactComponent as CodeAnalysisIcon } from './assets/code-analysis.svg';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'app/components/Link';
 import { messages } from '../messages';
+import Table from 'app/components/Table';
+
+
+
+const columns = [  {    Header: 'Name',    accessor: 'name',  },  {    Header: 'Age',    accessor: 'age',  },  {    Header: 'Country',    accessor: 'country',  },];
+
+const data = [  {    name: 'John',    age: 25,    country: 'USA',  },  {    name: 'Alice',    age: 30,    country: 'Canada',  },  {    name: 'Bob',    age: 35,    country: 'Mexico',  },];
+
 
 export function Features() {
   const { t } = useTranslation();
 
   return (
     <>
+    <Table columns={columns} data={data}/>
       {/* <Title as="h2">Features</Title>
       <Lead>
         Crafted for <strong>highly scalable</strong>,{' '}
