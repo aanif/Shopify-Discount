@@ -19,6 +19,10 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function AddOffer() {
   const [open, setOpen] = React.useState(false);
+  const [preReqProd, setPreReqProd] = React.useState('');
+  const [entitledProd, setEntitleProd] = React.useState('');
+  const [startTime, setStartTime] = React.useState('');
+  const [endTime, setEndTime] = React.useState('');
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -27,6 +31,10 @@ export default function AddOffer() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const handleSave = async ()=>{
+    await axios.post('http://127.0.0.1:8000/api/priceRule',{preReqProd,entitledProd,startTime,endTime});
+  }
 
   return (
     <div>
@@ -52,7 +60,7 @@ export default function AddOffer() {
       <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
         Create Offer
       </Typography>
-      <Button autoFocus color="inherit" onClick={handleClose}>
+      <Button autoFocus color="inherit" onClick={handleSave}>
         save
       </Button>
     </Toolbar>
@@ -60,22 +68,22 @@ export default function AddOffer() {
   <List sx={{ p: 2 }}>
     <ListItem>
       <ListItemText primary="Pre-requisite product" />
-      <input type="text" />
+      <input type="text" onChange={(e)=>{setPreReqProd()}}/>
     </ListItem>
     <Divider />
     <ListItem>
       <ListItemText primary="Entitled product" />
-      <input type="text" />
+      <input type="text" onChange={(e)=>{setEntitleProd()}}/>
     </ListItem>
     <Divider />
     <ListItem>
       <ListItemText primary="Start date and time" />
-      <input type="datetime-local" />
+      <input type="datetime-local" onChange={(e)=>{setStartTime()}}/>
     </ListItem>
     <Divider />
     <ListItem>
       <ListItemText primary="End date and time" />
-      <input type="datetime-local" />
+      <input type="datetime-local" onChange={(e)=>{setEndTime()}}/>
     </ListItem>
     <Divider />
   </List>
