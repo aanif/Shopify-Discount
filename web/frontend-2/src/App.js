@@ -24,6 +24,10 @@ function App() {
         setOffers(res.data.price_rules);
     }
 
+    const deleteOffer= (offer) => {
+        console.log(offer); //implement logic to remove offer from the table
+    }
+
     console.log("offers: ",offers)
 
   return (
@@ -41,6 +45,7 @@ function App() {
                         <td>{item.starts_at}</td>
                         <td>{item.ends_at}</td>
                         <td className=""><FullScreenDialog offer={item}/></td>
+                        <td onClick={()=>deleteOffer(item)}>Delete</td>
                     </tr>
                 ))}
             </tbody>

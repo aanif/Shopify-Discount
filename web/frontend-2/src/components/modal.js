@@ -54,11 +54,12 @@ export default function FullScreenDialog(offer) {
   },[]);
 
   React.useEffect(()=>{
-    setSingleProduct(products['products']?.filter((x=>x.id === 8144954589463))[0])
+    var product = products['products']?.filter((x=>x.id === offer['offer'].id))[0]
+    setSingleProduct(product)
   },[products])
 
-  // console.log("the products are: ",singleProduct)
-  // console.log("the products are: ",singleProduct)
+  // console.log("the products are: ",products['products'], offer['offer'].id)
+  // console.log("the products are: ",products['products']?.filter((x=> x.id === offer.offer.id)))
 
   const handleClickOpen = () => {
     setOpen(true);
