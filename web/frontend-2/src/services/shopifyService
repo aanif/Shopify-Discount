@@ -4,3 +4,8 @@ export const getAllPrices = async () => {
     const response = await axios.get('http://127.0.0.1:8000/api/priceRule');
     return response;
 }
+
+export const getAllProducts = async () =>{
+    const response = await axios.get('http://127.0.0.1:8000/api/product');
+    return response;
+}

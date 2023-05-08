@@ -6,6 +6,7 @@ import FullScreenDialog from './components/modal';
 function App() {
     const [offers, setOffers] = useState([]);
 
+
     useEffect(() => {
         getAllOffers();
     }, [])
@@ -22,6 +23,8 @@ function App() {
         })
         setOffers(res.data.price_rules);
     }
+
+    console.log("offers: ",offers)
 
   return (
     <div className="App container">

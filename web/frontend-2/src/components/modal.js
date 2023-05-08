@@ -16,6 +16,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
+import axios from 'axios';
 
 const RadioButtonsGroup=()=> {
   return (
@@ -39,6 +40,25 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function FullScreenDialog(offer) {
   const [open, setOpen] = React.useState(false);
+  const [products, setProducts] = React.useState([]);
+  const [singleProduct, setSingleProduct] = React.useState();
+
+  const getAllProducts = async () =>{
+    const response = await axios.get('http://127.0.0.1:8000/api/product');
+    setProducts(response.data)
+    
+}
+
+  React.useEffect(()=>{
+    getAllProducts()
+  },[]);
+
+  React.useEffect(()=>{
+    setSingleProduct(products['products']?.filter((x=>x.id === 8144954589463))[0])
+  },[products])
+
+  // console.log("the products are: ",singleProduct)
+  // console.log("the products are: ",singleProduct)
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -82,7 +102,7 @@ export default function FullScreenDialog(offer) {
         </AppBar>
         <List>
           <ListItem button>
-            <ListItemText primary="product A" secondary="Titania" />
+            <ListItemText primary={`${singleProduct?.title}`} secondary={`${singleProduct?.tags}`} />
             <ListItemText primary="$$$" />
           </ListItem>
           <Divider />
