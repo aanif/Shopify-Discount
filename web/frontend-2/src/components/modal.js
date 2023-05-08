@@ -40,8 +40,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function FullScreenDialog(offer) {
   const [open, setOpen] = React.useState(false);
 
-  console.log("the offer is: ", offer)
-
   const handleClickOpen = () => {
     setOpen(true);
   };
