@@ -20,7 +20,7 @@ import FormLabel from '@mui/material/FormLabel';
 const RadioButtonsGroup=()=> {
   return (
     <FormControl>
-      <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel>
+      <FormLabel id="demo-radio-buttons-group-label">Choose Product</FormLabel>
       <RadioGroup
         aria-labelledby="demo-radio-buttons-group-label"
         defaultValue="Product_id_A"
