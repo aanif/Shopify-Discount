@@ -18,23 +18,26 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from "@mui/icons-material/Edit";
 
 const style = {
     position: "absolute",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: 400,
+    width: "80%",
+    height: "80%",
     bgcolor: "background.paper",
     border: "2px solid #000",
     boxShadow: 24,
     p: 4,
+    overflow: 'auto'
 };
 
 function App() {
     const [offers, setOffers] = useState([]);
     const [isModal, setIsModal] = useState(false);
+    const [products, setProducts] = useState([]);
     const handleOpen = () => setIsModal(true);
     const handleClose = () => setIsModal(false);
 
@@ -43,6 +46,14 @@ function App() {
             setOffers(response.data.price_rules);
         });
     }, []);
+
+    useEffect(() => {
+        if (isModal == true) {
+            axios.get("http://127.0.0.1:8000/api/product").then((response) => {
+                setProducts(response.data.products);
+            });
+        }
+    }, [isModal]);
 
     const deleteOffer = (offer) => {
         console.log(offer); //implement logic to remove offer from the table
@@ -116,23 +127,29 @@ function App() {
                                 <Table>
                                     <TableHead>
                                         <TableRow>
+                                            <TableCell>ID</TableCell>
                                             <TableCell>Product</TableCell>
-                                            <TableCell>Price</TableCell>
+                                            <TableCell>Tag</TableCell>
+                                            <TableCell>Status</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        <TableRow>
-                                            <TableCell>Product A</TableCell>
-                                            <TableCell>$$$</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell>Product B</TableCell>
-                                            <TableCell>$$$</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell>Product C</TableCell>
-                                            <TableCell>$$$</TableCell>
-                                        </TableRow>
+                                        {products.map((product) => (
+                                            <TableRow key={product.id}>
+                                                <TableCell>
+                                                    {product.id}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {product.title}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {product.tags}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {product.status}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
                                     </TableBody>
                                 </Table>
                             </Box>
