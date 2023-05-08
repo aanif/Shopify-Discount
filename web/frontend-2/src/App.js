@@ -48,7 +48,7 @@ function App() {
                             <td>{item.starts_at}</td>
                             <td>{item.ends_at}</td>
                             <td className=""><FullScreenDialog offer={item}/></td>
-                            <td onClick={()=>deleteOffer(item)}>Delete</td>
+                            <td className="delete" onClick={()=>deleteOffer(item)}>Delete</td>
                         </tr>
                     ))}
                 </tbody>

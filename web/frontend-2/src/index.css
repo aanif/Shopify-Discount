@@ -36,3 +36,8 @@ code {
   color: white;
   cursor: pointer;
 }
+
+.delete{
+  color:crimson;
+  cursor: pointer;
+}
