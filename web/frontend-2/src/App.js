@@ -39,18 +39,18 @@ function App() {
     const [products, setProducts] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [selectedProductId, setSelectedProductId] = useState(null);
-    const [endTime, setEndTime] = useState('');
-    const [startTime, setStartTime] = useState('');
+    const [endTime, setEndTime] = useState("");
+    const [startTime, setStartTime] = useState("");
     const [edit, setEdit] = useState(false);
     const [preReqProd, setPreReqProd] = useState(8144954130711);
     const [entitledProd, setEntitledProd] = useState(8144954589463);
     const [priceRuleId, setPriceRuleId] = useState(null);
-    const [priceRuleAltered, setPriceRuleAltered] = useState(''); // on every CRUD operation data would be fetched and string would change to whatever ran last e.g for creation, 'C' ; for editing, 'U'....
+    const [priceRuleAltered, setPriceRuleAltered] = useState(""); // on every CRUD operation data would be fetched and string would change to whatever ran last e.g for creation, 'C' ; for editing, 'U'....
     const handleOpen = () => setIsModal(true);
     const handleClose = () => {
         setIsModal(false);
         setSelectedProductId(null);
-        setPriceRuleId(null)
+        setPriceRuleId(null);
         setEdit(false);
     };
 
@@ -68,14 +68,16 @@ function App() {
 
     const deleteOffer = (offer) => {
         console.log(offer);
-        axios.delete(`http://127.0.0.1:8001/api/priceRule/${offer.id}`).then((response) => {
-           console.log("Delete Response", response);
-           if(priceRuleAltered == 'D'){
-               setPriceRuleAltered('d');
-           }else{
-            setPriceRuleAltered('D');
-           }
-        });
+        axios
+            .delete(`http://127.0.0.1:8001/api/priceRule/${offer.id}`)
+            .then((response) => {
+                console.log("Delete Response", response);
+                if (priceRuleAltered == "D") {
+                    setPriceRuleAltered("d");
+                } else {
+                    setPriceRuleAltered("D");
+                }
+            });
     };
 
     const openModal = async () => {
@@ -84,43 +86,54 @@ function App() {
 
     const productsInTheOffer = (item) => {
         let any = [];
-        if (Array.isArray(item.prerequisite_product_ids) && item.prerequisite_product_ids.length > 0) {
-          const prereqProduct = products.filter((product) => product.id === item?.prerequisite_product_ids[0]);
-          console.log("prereq ", prereqProduct);
-          any = [...filteredProducts, prereqProduct[0]];
+        if (
+            Array.isArray(item.prerequisite_product_ids) &&
+            item.prerequisite_product_ids.length > 0
+        ) {
+            const prereqProduct = products.filter(
+                (product) => product.id === item?.prerequisite_product_ids[0]
+            );
+            console.log("prereq ", prereqProduct);
+            any = [...filteredProducts, prereqProduct[0]];
         }
-      
-        if (Array.isArray(item.entitled_product_ids) && item.entitled_product_ids.length > 0) {
-          const entitledProduct = products.filter((product) => product.id === item?.entitled_product_ids[0]);
-          console.log("entite ", entitledProduct);
-          setFilteredProducts([...any, entitledProduct[0]]);
+
+        if (
+            Array.isArray(item.entitled_product_ids) &&
+            item.entitled_product_ids.length > 0
+        ) {
+            const entitledProduct = products.filter(
+                (product) => product.id === item?.entitled_product_ids[0]
+            );
+            console.log("entite ", entitledProduct);
+            setFilteredProducts([...any, entitledProduct[0]]);
         }
-      
+
         console.log("filtered", products, item, filteredProducts);
         setIsModal(true);
-      };
+    };
 
-      const saveEdit = async () => {
-        await axios.put(`http://127.0.0.1:8000/api/priceRule/${priceRuleId}`, {
-          title: "edited_offer",
-          prerequisite_product_ids: [preReqProd],
-          entitled_product_ids: [entitledProd],
-          starts_at : startTime,
-          ends_at: endTime,
-        }).then((response)=>{
-          console.log("response is: ", response);
-          if(priceRuleAltered == 'U'){
-            setPriceRuleAltered('u');
-        }else{
-         setPriceRuleAltered('U');
-        }
+    const saveEdit = async () => {
+        await axios
+            .put(`http://127.0.0.1:8000/api/priceRule/${priceRuleId}`, {
+                title: "edited_offer",
+                prerequisite_product_ids: [preReqProd],
+                entitled_product_ids: [entitledProd],
+                starts_at: startTime,
+                ends_at: endTime,
+            })
+            .then((response) => {
+                console.log("response is: ", response);
+                if (priceRuleAltered == "U") {
+                    setPriceRuleAltered("u");
+                } else {
+                    setPriceRuleAltered("U");
+                }
 
-          setStartTime('');
-          setEndTime('');
-          setIsModal(false);
-        });
-      }
-      
+                setStartTime("");
+                setEndTime("");
+                setIsModal(false);
+            });
+    };
 
     console.log(filteredProducts, "filteredProducts");
 
@@ -171,134 +184,162 @@ function App() {
                         >
                             <Box sx={style}>
                                 <AppBar sx={{ position: "relative" }}>
-                                    {!edit ? <Toolbar>
-                                        <IconButton
-                                            edge="start"
-                                            color="inherit"
-                                            onClick={() => {
-                                                handleClose();
-                                                setFilteredProducts([]);
+                                    {!edit ? (
+                                        <Toolbar>
+                                            <IconButton
+                                                edge="start"
+                                                color="inherit"
+                                                onClick={() => {
+                                                    handleClose();
+                                                    setFilteredProducts([]);
+                                                }}
+                                                aria-label="close"
+                                            >
+                                                <CloseIcon />
+                                            </IconButton>
+                                            <IconButton
+                                                title="edit"
+                                                edge="end"
+                                                color="inherit"
+                                                onClick={() => {
+                                                    setEdit(true);
+                                                }}
+                                                aria-label="edit"
+                                            >
+                                                <EditIcon />
+                                            </IconButton>
+                                        </Toolbar>
+                                    ) : (
+                                        <Toolbar
+                                            sx={{
+                                                justifyContent: "space-between",
                                             }}
-                                            aria-label="close"
                                         >
-                                            <CloseIcon />
-                                        </IconButton>
-                                        <IconButton
-                                            title="edit"
-                                            edge="end"
-                                            color="inherit"
-                                            onClick={() => {
-                                                setEdit(true);
-                                            }}
-                                            aria-label="edit"
-                                        >
-                                            <EditIcon />
-                                        </IconButton>
-                                    </Toolbar> : <Toolbar sx={{ justifyContent: 'space-between' }}>
-                                        <IconButton
-                                            edge="start"
-                                            color="inherit"
-                                            onClick={() => {
-                                                handleClose();
-                                                setFilteredProducts([]);
-                                            }}
-                                            aria-label="close"
-                                        >
-                                            <CloseIcon />
-                                        </IconButton>
-                                        <IconButton
-                                            title="save"
-                                            edge="end"
-                                            color="inherit"
-                                            onClick={() => {
-                                                saveEdit();
-                                            }}
-                                            aria-label="save"
-                                        >
-                                            Save
-                                        </IconButton>
-                                    </Toolbar> }
+                                            <IconButton
+                                                edge="start"
+                                                color="inherit"
+                                                onClick={() => {
+                                                    handleClose();
+                                                    setFilteredProducts([]);
+                                                }}
+                                                aria-label="close"
+                                            >
+                                                <CloseIcon />
+                                            </IconButton>
+                                            <IconButton
+                                                title="save"
+                                                edge="end"
+                                                color="inherit"
+                                                onClick={() => {
+                                                    saveEdit();
+                                                }}
+                                                aria-label="save"
+                                            >
+                                                Save
+                                            </IconButton>
+                                        </Toolbar>
+                                    )}
                                 </AppBar>
                                 <Table>
-                                    {!edit ? <TableHead>
-                                        <TableRow>
-                                            <TableCell>ID</TableCell>
-                                            <TableCell>Product</TableCell>
-                                            <TableCell>Tag</TableCell>
-                                            <TableCell>Status</TableCell>
-                                            <TableCell>Select Product</TableCell>
-                                        </TableRow>
-                                    </TableHead> : <TableHead>
-                                        <TableRow>
-                                            <TableCell>Product</TableCell>
-                                            <TableCell>Tag</TableCell>
-                                            <TableCell>Status</TableCell>
-                                        </TableRow>
-                                    </TableHead>}
-                                    {!edit ? <TableBody>
-                                        {filteredProducts.map((product) => (
-                                            <TableRow key={product.id}>
+                                    {!edit ? (
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell>ID</TableCell>
+                                                <TableCell>Product</TableCell>
+                                                <TableCell>Tag</TableCell>
+                                                <TableCell>Status</TableCell>
                                                 <TableCell>
-                                                    {product.id}
+                                                    Select Product
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                    ) : (
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell>Product</TableCell>
+                                                <TableCell>Tag</TableCell>
+                                                <TableCell>Status</TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                    )}
+                                    {!edit ? (
+                                        <TableBody>
+                                            {filteredProducts.map((product) => (
+                                                <TableRow key={product.id}>
+                                                    <TableCell>
+                                                        {product.id}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {product.title}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {product.tags}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {product.status}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Radio
+                                                            onChange={() =>
+                                                                setSelectedProductId(
+                                                                    product.id
+                                                                )
+                                                            }
+                                                        />
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    ) : (
+                                        <TableBody>
+                                            {filteredProducts.map((product) => (
+                                                <TableRow key={product.id}>
+                                                    <TableCell>
+                                                        {product.title}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {product.tags}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {product.status}
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                            <TableRow>
+                                                <TableCell>
+                                                    Start Time:{" "}
+                                                    <input
+                                                        type="datetime-local"
+                                                        onChange={(e) => {
+                                                            setStartTime(
+                                                                e.target.value
+                                                            );
+                                                        }}
+                                                    />
                                                 </TableCell>
                                                 <TableCell>
-                                                    {product.title}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {product.tags}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {product.status}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Radio
-                                                        // checked={
-                                                        //     product.id ===
-                                                        //     selectedProductId
-                                                        // }
-                                                        onChange={() =>
-                                                            setSelectedProductId(
-                                                                product.id
-                                                            )
-                                                        }
+                                                    End Time:{" "}
+                                                    <input
+                                                        type="datetime-local"
+                                                        onChange={(e) => {
+                                                            setEndTime(
+                                                                e.target.value
+                                                            );
+                                                        }}
                                                     />
                                                 </TableCell>
                                             </TableRow>
-                                        ))}
-                                    </TableBody> : <TableBody>
-                                        {filteredProducts.map((product) => (
-                                            <TableRow key={product.id}>
-                                                <TableCell>
-                                                    {product.title}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {product.tags}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {product.status}
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                        <TableRow>
-                                            <TableCell>Start Time: {" "}
-                                                    <input type="datetime-local" onChange={(e) => {
-                                                                                    setStartTime(e.target.value);
-                                                                                    }} />
-                                                    </TableCell>
-                                                    <TableCell>End Time: {" "}
-                                                    <input type="datetime-local" onChange={(e) => {
-                                                                          setEndTime(e.target.value);
-                                                                        }} />
-                                                    </TableCell>
-                                        </TableRow>
-                                    </TableBody> }
+                                        </TableBody>
+                                    )}
                                 </Table>
                             </Box>
                         </Modal>
                     )}
-
                     <div>
-                        <AddOffer setPriceRuleAltered={setPriceRuleAltered} priceRuleAltered={priceRuleAltered}/>
+                        <AddOffer
+                            setPriceRuleAltered={setPriceRuleAltered}
+                            priceRuleAltered={priceRuleAltered}
+                        />
                     </div>
                 </div>
             )}
