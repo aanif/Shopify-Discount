@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import axios from "axios";
-import FullScreenDialog from "./components/modal.js";
 import AddOffer from "./components/addModal.js";
 import {
     Button,
@@ -38,18 +37,20 @@ function App() {
     const [offers, setOffers] = useState([]);
     const [isModal, setIsModal] = useState(false);
     const [products, setProducts] = useState([]);
+    const [offerId, setOfferId] = useState(null)
     const handleOpen = () => setIsModal(true);
-    const handleClose = () => setIsModal(false);
+    const handleClose = () => {setIsModal(false);
+        setOfferId(null)};
 
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/api/priceRule").then((response) => {
+        axios.get("http://127.0.0.1:8001/api/priceRule").then((response) => {
             setOffers(response.data.price_rules);
         });
     }, []);
 
     useEffect(() => {
         if (isModal == true) {
-            axios.get("http://127.0.0.1:8000/api/product").then((response) => {
+            axios.get("http://127.0.0.1:8001/api/product").then((response) => {
                 setProducts(response.data.products);
             });
         }
@@ -62,6 +63,7 @@ function App() {
     const openModal = async () => {
         handleOpen();
     };
+
     return (
         <div className="App container">
             {offers.length > 0 && (
@@ -78,14 +80,17 @@ function App() {
                                     <td>{item.title}</td>
                                     <td>{item.starts_at}</td>
                                     <td>{item.ends_at}</td>
-                                    <Button
-                                        onClick={() => {
-                                            setIsModal(true);
-                                        }}
-                                    >
-                                        {" "}
-                                        CHECK OFFER{" "}
-                                    </Button>
+                                    <td>
+                                        <Button
+                                            onClick={() => {
+                                                setIsModal(true);
+                                                setOfferId(item.id);
+                                            }}
+                                        >
+                                            {" "}
+                                            CHECK OFFER{" "}
+                                        </Button>
+                                    </td>
                                     <td
                                         className="delete"
                                         onClick={() => deleteOffer(item)}
