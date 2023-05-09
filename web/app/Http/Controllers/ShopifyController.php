@@ -107,7 +107,7 @@ class ShopifyController extends Controller
     public function updatePriceRule(Request $request, $id)
     {
         $validated = $request->validate([
-            'prerequisite_collection_ids' => 'array',
+            'prerequisite_product_ids' => 'array',
             'entitled_product_ids' => 'array',
             'title' => 'max:225',
             'starts_at' => 'date',
