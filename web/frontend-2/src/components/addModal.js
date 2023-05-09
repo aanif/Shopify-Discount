@@ -18,7 +18,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function AddOffer(props) {
-  const { setPriceRuleAltered } = props;
+  const { setPriceRuleAltered, priceRuleAltered } = props;
     const [open, setOpen] = React.useState(false);
     const [title, setTitle] = React.useState('')
     const [preReqProd, setPreReqProd] = React.useState(8144954130711);
@@ -52,10 +52,15 @@ export default function AddOffer(props) {
           ends_at: endTime,
         }).then((response)=>{
           console.log("response is: ", response);
-          setPriceRuleAltered('C');
-          resetForm();
-        });
+          if(priceRuleAltered == 'C'){
+            setPriceRuleAltered('c');
+        }else{
+         setPriceRuleAltered('C');
+        }
+
+        resetForm();
         handleClose();
+        });
     };
 
     return (
