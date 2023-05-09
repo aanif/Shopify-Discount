@@ -86,7 +86,7 @@ class ShopifyController extends Controller
                     "allocation_method" => "each",
                     "starts_at" => $request->starts_at,
                     "ends_at" => $request->ends_at,
-                    "prerequisite_product_ids" => $request->prerequisite_collection_ids,
+                    "prerequisite_product_ids" => $request->prerequisite_product_ids,
                     "entitled_product_ids" => $request->entitled_product_ids,
                     "prerequisite_to_entitlement_quantity_ratio" => [
                         "prerequisite_quantity" => 1,
