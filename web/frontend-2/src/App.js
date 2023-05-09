@@ -42,6 +42,8 @@ function App() {
     const [endTime, setEndTime] = useState('');
     const [startTime, setStartTime] = useState('');
     const [edit, setEdit] = useState(false);
+    const [preReqProd, setPreReqProd] = useState(8144954130711);
+    const [entitledProd, setEntitledProd] = useState(8144954589463);
     const [priceRuleId, setPriceRuleId] = useState(null);
     const [priceRuleAltered, setPriceRuleAltered] = useState(''); // on every CRUD operation data would be fetched and string would change to whatever ran last e.g for creation, 'C' ; for editing, 'U'....
     const handleOpen = () => setIsModal(true);
@@ -101,8 +103,8 @@ function App() {
       const saveEdit = async () => {
         await axios.put(`http://127.0.0.1:8000/api/priceRule/${priceRuleId}`, {
           title: "edited_offer",
-          prerequisite_product_ids: [8144954130711],
-          entitled_product_ids: [8144954589463],
+          prerequisite_product_ids: [preReqProd],
+          entitled_product_ids: [entitledProd],
           starts_at : startTime,
           ends_at: endTime,
         }).then((response)=>{
@@ -112,7 +114,7 @@ function App() {
         }else{
          setPriceRuleAltered('U');
         }
-        
+
           setStartTime('');
           setEndTime('');
           setIsModal(false);
@@ -296,7 +298,7 @@ function App() {
                     )}
 
                     <div>
-                        <AddOffer setPriceRuleAltered={setPriceRuleAltered}/>
+                        <AddOffer setPriceRuleAltered={setPriceRuleAltered} priceRuleAltered={priceRuleAltered}/>
                     </div>
                 </div>
             )}
