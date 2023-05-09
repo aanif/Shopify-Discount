@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import axios from "axios";
-import FullScreenDialog from "./components/modal.js";
 import AddOffer from "./components/addModal.js";
 import {
     Button,
+    Radio,
     Table,
     TableBody,
     TableCell,
@@ -31,37 +31,69 @@ const style = {
     border: "2px solid #000",
     boxShadow: 24,
     p: 4,
-    overflow: 'auto'
+    overflow: "auto",
 };
 
 function App() {
     const [offers, setOffers] = useState([]);
     const [isModal, setIsModal] = useState(false);
     const [products, setProducts] = useState([]);
+    const [filteredProducts, setFilteredProducts] = useState([]);
+    const [selectedProductId, setSelectedProductId] = useState(null);
+    const [priceRuleAltered, setPriceRuleAltered] = useState(''); // on every CRUD operation data would be fetched and string would change to whatever ran last e.g for creation, 'C' ; for editing, 'U'....
     const handleOpen = () => setIsModal(true);
-    const handleClose = () => setIsModal(false);
+    const handleClose = () => {
+        setIsModal(false);
+        setSelectedProductId(null);
+    };
 
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/api/priceRule").then((response) => {
+        axios.get("http://127.0.0.1:8001/api/priceRule").then((response) => {
             setOffers(response.data.price_rules);
         });
-    }, []);
+    }, [priceRuleAltered]);
 
     useEffect(() => {
-        if (isModal == true) {
-            axios.get("http://127.0.0.1:8000/api/product").then((response) => {
-                setProducts(response.data.products);
-            });
-        }
-    }, [isModal]);
+        // if (isModal == true) {
+        axios.get("http://127.0.0.1:8001/api/product").then((response) => {
+            setProducts(response.data.products);
+        });
+        // }
+    }, []);
 
     const deleteOffer = (offer) => {
-        console.log(offer); //implement logic to remove offer from the table
+        console.log(offer);
+        axios.delete(`http://127.0.0.1:8001/api/priceRule/${offer.id}`).then((response) => {
+           console.log("Delete Response", response);
+        });
+        setPriceRuleAltered('D')
     };
 
     const openModal = async () => {
         handleOpen();
     };
+
+    const productsInTheOffer = (item) => {
+        let any = [];
+        if (Array.isArray(item.prerequisite_product_ids) && item.prerequisite_product_ids.length > 0) {
+          const prereqProduct = products.filter((product) => product.id === item?.prerequisite_product_ids[0]);
+          console.log("prereq ", prereqProduct);
+          any = [...filteredProducts, prereqProduct[0]];
+        }
+      
+        if (Array.isArray(item.entitled_product_ids) && item.entitled_product_ids.length > 0) {
+          const entitledProduct = products.filter((product) => product.id === item?.entitled_product_ids[0]);
+          console.log("entite ", entitledProduct);
+          setFilteredProducts([...any, entitledProduct[0]]);
+        }
+      
+        console.log("filtered", products, item, filteredProducts);
+        setIsModal(true);
+      };
+      
+
+    console.log(filteredProducts, "filteredProducts");
+
     return (
         <div className="App container">
             {offers.length > 0 && (
@@ -78,14 +110,17 @@ function App() {
                                     <td>{item.title}</td>
                                     <td>{item.starts_at}</td>
                                     <td>{item.ends_at}</td>
-                                    <Button
-                                        onClick={() => {
-                                            setIsModal(true);
-                                        }}
-                                    >
-                                        {" "}
-                                        CHECK OFFER{" "}
-                                    </Button>
+                                    <td>
+                                        <Button
+                                            onClick={() => {
+                                                console.log("items", item);
+                                                productsInTheOffer(item);
+                                            }}
+                                        >
+                                            {" "}
+                                            CHECK OFFER{" "}
+                                        </Button>
+                                    </td>
                                     <td
                                         className="delete"
                                         onClick={() => deleteOffer(item)}
@@ -109,7 +144,10 @@ function App() {
                                         <IconButton
                                             edge="start"
                                             color="inherit"
-                                            onClick={handleClose}
+                                            onClick={() => {
+                                                handleClose();
+                                                setFilteredProducts([]);
+                                            }}
                                             aria-label="close"
                                         >
                                             <CloseIcon />
@@ -117,7 +155,10 @@ function App() {
                                         <IconButton
                                             edge="end"
                                             color="inherit"
-                                            onClick={handleClose}
+                                            onClick={() => {
+                                                handleClose();
+                                                setFilteredProducts([]);
+                                            }}
                                             aria-label="close"
                                         >
                                             <EditIcon />
@@ -131,10 +172,11 @@ function App() {
                                             <TableCell>Product</TableCell>
                                             <TableCell>Tag</TableCell>
                                             <TableCell>Status</TableCell>
+                                            <TableCell>Select Product</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {products.map((product) => (
+                                        {filteredProducts.map((product) => (
                                             <TableRow key={product.id}>
                                                 <TableCell>
                                                     {product.id}
@@ -148,6 +190,19 @@ function App() {
                                                 <TableCell>
                                                     {product.status}
                                                 </TableCell>
+                                                <TableCell>
+                                                    <Radio
+                                                        // checked={
+                                                        //     product.id ===
+                                                        //     selectedProductId
+                                                        // }
+                                                        onChange={() =>
+                                                            setSelectedProductId(
+                                                                product.id
+                                                            )
+                                                        }
+                                                    />
+                                                </TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
@@ -157,7 +212,7 @@ function App() {
                     )}
 
                     <div>
-                        <AddOffer />
+                        <AddOffer setPriceRuleAltered={setPriceRuleAltered}/>
                     </div>
                 </div>
             )}
