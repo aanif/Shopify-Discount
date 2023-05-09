@@ -67,7 +67,7 @@ class ShopifyController extends Controller
     public function createPriceRule(Request $request)
     {
         $validated = $request->validate([
-            'prerequisite_collection_ids' => 'required|array',
+            'prerequisite_product_ids' => 'required|array',
             'entitled_product_ids' => 'required|array',
             'title' => 'required|max:225',
             'starts_at' => 'required|date',
