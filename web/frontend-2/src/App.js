@@ -4,6 +4,7 @@ import axios from "axios";
 import AddOffer from "./components/addModal.js";
 import {
     Button,
+    Radio,
     Table,
     TableBody,
     TableCell,
@@ -30,17 +31,20 @@ const style = {
     border: "2px solid #000",
     boxShadow: 24,
     p: 4,
-    overflow: 'auto'
+    overflow: "auto",
 };
 
 function App() {
     const [offers, setOffers] = useState([]);
     const [isModal, setIsModal] = useState(false);
     const [products, setProducts] = useState([]);
-    const [offerId, setOfferId] = useState(null)
+    const [filteredProducts, setFilteredProducts] = useState([]);
+    const [selectedProductId, setSelectedProductId] = useState(null);
     const handleOpen = () => setIsModal(true);
-    const handleClose = () => {setIsModal(false);
-        setOfferId(null)};
+    const handleClose = () => {
+        setIsModal(false);
+        setSelectedProductId(null);
+    };
 
     useEffect(() => {
         axios.get("http://127.0.0.1:8001/api/priceRule").then((response) => {
@@ -49,12 +53,12 @@ function App() {
     }, []);
 
     useEffect(() => {
-        if (isModal == true) {
-            axios.get("http://127.0.0.1:8001/api/product").then((response) => {
-                setProducts(response.data.products);
-            });
-        }
-    }, [isModal]);
+        // if (isModal == true) {
+        axios.get("http://127.0.0.1:8001/api/product").then((response) => {
+            setProducts(response.data.products);
+        });
+        // }
+    }, []);
 
     const deleteOffer = (offer) => {
         console.log(offer); //implement logic to remove offer from the table
@@ -63,6 +67,27 @@ function App() {
     const openModal = async () => {
         handleOpen();
     };
+
+    const productsInTheOffer = (item) => {
+        let any = [];
+        if (Array.isArray(item.prerequisite_product_ids) && item.prerequisite_product_ids.length > 0) {
+          const prereqProduct = products.filter((product) => product.id === item?.prerequisite_product_ids[0]);
+          console.log("prereq ", prereqProduct);
+          any = [...filteredProducts, prereqProduct[0]];
+        }
+      
+        if (Array.isArray(item.entitled_product_ids) && item.entitled_product_ids.length > 0) {
+          const entitledProduct = products.filter((product) => product.id === item?.entitled_product_ids[0]);
+          console.log("entite ", entitledProduct);
+          setFilteredProducts([...any, entitledProduct[0]]);
+        }
+      
+        console.log("filtered", products, item, filteredProducts);
+        setIsModal(true);
+      };
+      
+
+    console.log(filteredProducts, "filteredProducts");
 
     return (
         <div className="App container">
@@ -83,8 +108,8 @@ function App() {
                                     <td>
                                         <Button
                                             onClick={() => {
-                                                setIsModal(true);
-                                                setOfferId(item.id);
+                                                console.log("items", item);
+                                                productsInTheOffer(item);
                                             }}
                                         >
                                             {" "}
@@ -114,7 +139,10 @@ function App() {
                                         <IconButton
                                             edge="start"
                                             color="inherit"
-                                            onClick={handleClose}
+                                            onClick={() => {
+                                                handleClose();
+                                                setFilteredProducts([]);
+                                            }}
                                             aria-label="close"
                                         >
                                             <CloseIcon />
@@ -122,7 +150,10 @@ function App() {
                                         <IconButton
                                             edge="end"
                                             color="inherit"
-                                            onClick={handleClose}
+                                            onClick={() => {
+                                                handleClose();
+                                                setFilteredProducts([]);
+                                            }}
                                             aria-label="close"
                                         >
                                             <EditIcon />
@@ -136,10 +167,11 @@ function App() {
                                             <TableCell>Product</TableCell>
                                             <TableCell>Tag</TableCell>
                                             <TableCell>Status</TableCell>
+                                            <TableCell>Select Product</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {products.map((product) => (
+                                        {filteredProducts.map((product) => (
                                             <TableRow key={product.id}>
                                                 <TableCell>
                                                     {product.id}
@@ -152,6 +184,19 @@ function App() {
                                                 </TableCell>
                                                 <TableCell>
                                                     {product.status}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Radio
+                                                        // checked={
+                                                        //     product.id ===
+                                                        //     selectedProductId
+                                                        // }
+                                                        onChange={() =>
+                                                            setSelectedProductId(
+                                                                product.id
+                                                            )
+                                                        }
+                                                    />
                                                 </TableCell>
                                             </TableRow>
                                         ))}
