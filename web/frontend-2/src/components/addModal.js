@@ -17,12 +17,14 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function AddOffer(setPriceRuleAltered) {
+export default function AddOffer(props) {
+  const { setPriceRuleAltered } = props;
     const [open, setOpen] = React.useState(false);
-    const [preReqProd, setPreReqProd] = React.useState("");
-    const [entitledProd, setEntitledProd] = React.useState("");
-    const [startTime, setStartTime] = React.useState("");
-    const [endTime, setEndTime] = React.useState("");
+    const [title, setTitle] = React.useState('')
+    const [preReqProd, setPreReqProd] = React.useState(8144954130711);
+    const [entitledProd, setEntitledProd] = React.useState(8144954589463);
+    const [startTime, setStartTime] = React.useState('');
+    const [endTime, setEndTime] = React.useState('');
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -30,30 +32,30 @@ export default function AddOffer(setPriceRuleAltered) {
 
     const handleClose = () => {
         setOpen(false);
-        setPreReqProd('');
-        setEntitledProd('');
+        setTitle('')
         setStartTime('');
         setEndTime('');
     };
 
     const resetForm = () => {
-        setPreReqProd('');
-        setEntitledProd('');
+        setTitle('')
         setStartTime('');
         setEndTime('');
     }
 
     const handleSave = async () => {
         await axios.post("http://127.0.0.1:8000/api/priceRule", {
-            preReqProd,
-            entitledProd,
-            startTime,
-            endTime,
+          title: title,
+          prerequisite_product_ids: [preReqProd],
+          entitled_product_ids: [entitledProd],
+          starts_at : startTime,
+          ends_at: endTime,
         }).then((response)=>{
           console.log("response is: ", response);
           setPriceRuleAltered('C');
           resetForm();
         });
+        handleClose();
     };
 
     return (
@@ -91,21 +93,11 @@ export default function AddOffer(setPriceRuleAltered) {
                 </AppBar>
                 <List sx={{ p: 2 }}>
                     <ListItem>
-                        <ListItemText primary="Pre-requisite product" />
+                        <ListItemText primary="Title Product" />
                         <input
                             type="text"
                             onChange={(e) => {
-                              setPreReqProd(e.target.value);
-                            }}
-                        />
-                    </ListItem>
-                    <Divider />
-                    <ListItem>
-                        <ListItemText primary="Entitled product" />
-                        <input
-                            type="text"
-                            onChange={(e) => {
-                              setEntitledProd(e.target.value);
+                              setTitle(e.target.value);
                             }}
                         />
                     </ListItem>
