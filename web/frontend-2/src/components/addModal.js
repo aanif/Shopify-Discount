@@ -12,19 +12,23 @@ import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
 import Slide from "@mui/material/Slide";
 import axios from "axios";
+import { Radio } from "@mui/material";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
 export default function AddOffer(props) {
-  const { setPriceRuleAltered, priceRuleAltered } = props;
+    const { products, setPriceRuleAltered, priceRuleAltered } = props;
     const [open, setOpen] = React.useState(false);
-    const [title, setTitle] = React.useState('')
-    const [preReqProd, setPreReqProd] = React.useState(8144954130711);
-    const [entitledProd, setEntitledProd] = React.useState(8144954589463);
-    const [startTime, setStartTime] = React.useState('');
-    const [endTime, setEndTime] = React.useState('');
+    const [title, setTitle] = React.useState("");
+    const [preReqProd, setPreReqProd] = React.useState([]);
+    const [entitledProd, setEntitledProd] = React.useState([]);
+    const [startTime, setStartTime] = React.useState("");
+    const [endTime, setEndTime] = React.useState("");
+    const [selectedProductId, setSelectedProductId] = React.useState(null);
+    const [selectedGiftProductId, setSelectedGiftProductId] =
+        React.useState(null);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -32,35 +36,37 @@ export default function AddOffer(props) {
 
     const handleClose = () => {
         setOpen(false);
-        setTitle('')
-        setStartTime('');
-        setEndTime('');
+        setTitle("");
+        setStartTime("");
+        setEndTime("");
     };
 
     const resetForm = () => {
-        setTitle('')
-        setStartTime('');
-        setEndTime('');
-    }
+        setTitle("");
+        setStartTime("");
+        setEndTime("");
+    };
 
     const handleSave = async () => {
-        await axios.post("http://127.0.0.1:8000/api/priceRule", {
-          title: title,
-          prerequisite_product_ids: [preReqProd],
-          entitled_product_ids: [entitledProd],
-          starts_at : startTime,
-          ends_at: endTime,
-        }).then((response)=>{
-          console.log("response is: ", response);
-          if(priceRuleAltered == 'C'){
-            setPriceRuleAltered('c');
-        }else{
-         setPriceRuleAltered('C');
-        }
+        await axios
+            .post("http://127.0.0.1:8000/api/priceRule", {
+                title: title,
+                prerequisite_product_ids: [selectedProductId],
+                entitled_product_ids: [selectedGiftProductId],
+                starts_at: startTime,
+                ends_at: endTime,
+            })
+            .then((response) => {
+                console.log("response is: ", response);
+                if (priceRuleAltered == "C") {
+                    setPriceRuleAltered("c");
+                } else {
+                    setPriceRuleAltered("C");
+                }
 
-        resetForm();
-        handleClose();
-        });
+                resetForm();
+                handleClose();
+            });
     };
 
     return (
@@ -102,7 +108,7 @@ export default function AddOffer(props) {
                         <input
                             type="text"
                             onChange={(e) => {
-                              setTitle(e.target.value);
+                                setTitle(e.target.value);
                             }}
                         />
                     </ListItem>
@@ -112,7 +118,7 @@ export default function AddOffer(props) {
                         <input
                             type="datetime-local"
                             onChange={(e) => {
-                              setStartTime(e.target.value);
+                                setStartTime(e.target.value);
                             }}
                         />
                     </ListItem>
@@ -127,6 +133,48 @@ export default function AddOffer(props) {
                         />
                     </ListItem>
                     <Divider />
+                    <div style={{ display: "flex" }}>
+                        <div style={{ flex: 1 }}>
+                            <Typography
+                                sx={{ marginX: 3, marginY: 3, fontSize: 20 }}
+                            >
+                                Eligible Products
+                            </Typography>
+                            {products.map((product) => (
+                                <ListItem key={product.id}>
+                                    <Radio
+                                        checked={
+                                            selectedProductId === product.id
+                                        }
+                                        onClick={() =>
+                                            setSelectedProductId(product.id)
+                                        }
+                                    />
+                                    <ListItemText primary={product.title} />
+                                </ListItem>
+                            ))}
+                        </div>
+                        <div style={{ flex: 1 }}>
+                            <Typography
+                                sx={{ marginX: 3, marginY: 3, fontSize: 20 }}
+                            >
+                                Gift Products
+                            </Typography>
+                            {products.map((product) => (
+                                <ListItem key={product.id}>
+                                    <Radio
+                                        checked={
+                                            selectedGiftProductId === product.id
+                                        }
+                                        onClick={() =>
+                                            setSelectedGiftProductId(product.id)
+                                        }
+                                    />
+                                    <ListItemText primary={product.title} />
+                                </ListItem>
+                            ))}
+                        </div>
+                    </div>
                 </List>
             </Dialog>
         </div>

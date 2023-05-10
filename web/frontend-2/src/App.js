@@ -38,20 +38,22 @@ function App() {
     const [isModal, setIsModal] = useState(false);
     const [products, setProducts] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([]);
-    const [selectedProductId, setSelectedProductId] = useState(null);
     const [endTime, setEndTime] = useState("");
     const [startTime, setStartTime] = useState("");
     const [edit, setEdit] = useState(false);
-    const [preReqProd, setPreReqProd] = useState(8144954130711);
-    const [entitledProd, setEntitledProd] = useState(8144954589463);
+    const [preRequisiteProductId, setPreRequisiteProductId] = useState([]);
+    const [entitledProductId, setEntitledProductId] = useState([]);
     const [priceRuleId, setPriceRuleId] = useState(null);
     const [priceRuleAltered, setPriceRuleAltered] = useState(""); // on every CRUD operation data would be fetched and string would change to whatever ran last e.g for creation, 'C' ; for editing, 'U'....
-    const handleOpen = () => setIsModal(true);
-    const handleClose = () => {
-        setIsModal(false);
-        setSelectedProductId(null);
-        setPriceRuleId(null);
-        setEdit(false);
+
+    const handleClose = (event, reason) => {
+        if (reason && reason == "backdropClick"){
+            return;
+        }else{
+            setIsModal(false);
+            setPriceRuleId(null);
+            setEdit(false);
+        }
     };
 
     useEffect(() => {
@@ -80,12 +82,8 @@ function App() {
             });
     };
 
-    const openModal = async () => {
-        handleOpen();
-    };
-
     const productsInTheOffer = (item) => {
-        let any = [];
+        let prereqObj = [];
         if (
             Array.isArray(item.prerequisite_product_ids) &&
             item.prerequisite_product_ids.length > 0
@@ -94,7 +92,7 @@ function App() {
                 (product) => product.id === item?.prerequisite_product_ids[0]
             );
             console.log("prereq ", prereqProduct);
-            any = [...filteredProducts, prereqProduct[0]];
+            prereqObj = [...filteredProducts, prereqProduct[0]];
         }
 
         if (
@@ -105,7 +103,7 @@ function App() {
                 (product) => product.id === item?.entitled_product_ids[0]
             );
             console.log("entite ", entitledProduct);
-            setFilteredProducts([...any, entitledProduct[0]]);
+            setFilteredProducts([...prereqObj, entitledProduct[0]]);
         }
 
         console.log("filtered", products, item, filteredProducts);
@@ -116,8 +114,8 @@ function App() {
         await axios
             .put(`http://127.0.0.1:8000/api/priceRule/${priceRuleId}`, {
                 title: "edited_offer",
-                prerequisite_product_ids: [preReqProd],
-                entitled_product_ids: [entitledProd],
+                prerequisite_product_ids: [preRequisiteProductId],
+                entitled_product_ids: [entitledProductId],
                 starts_at: startTime,
                 ends_at: endTime,
             })
@@ -159,6 +157,8 @@ function App() {
                                                 console.log("items", item);
                                                 productsInTheOffer(item);
                                                 setPriceRuleId(item.id);
+                                                setPreRequisiteProductId(item.prerequisite_product_ids);
+                                                setEntitledProductId(item.entitled_product_ids);
                                             }}
                                         >
                                             {" "}
@@ -248,9 +248,6 @@ function App() {
                                                 <TableCell>Product</TableCell>
                                                 <TableCell>Tag</TableCell>
                                                 <TableCell>Status</TableCell>
-                                                <TableCell>
-                                                    Select Product
-                                                </TableCell>
                                             </TableRow>
                                         </TableHead>
                                     ) : (
@@ -277,15 +274,6 @@ function App() {
                                                     </TableCell>
                                                     <TableCell>
                                                         {product.status}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Radio
-                                                            onChange={() =>
-                                                                setSelectedProductId(
-                                                                    product.id
-                                                                )
-                                                            }
-                                                        />
                                                     </TableCell>
                                                 </TableRow>
                                             ))}
@@ -339,6 +327,7 @@ function App() {
                         <AddOffer
                             setPriceRuleAltered={setPriceRuleAltered}
                             priceRuleAltered={priceRuleAltered}
+                            products={products}
                         />
                     </div>
                 </div>
