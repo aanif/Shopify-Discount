@@ -45,11 +45,12 @@ function App() {
     const [entitledProductId, setEntitledProductId] = useState([]);
     const [priceRuleId, setPriceRuleId] = useState(null);
     const [priceRuleAltered, setPriceRuleAltered] = useState(""); // on every CRUD operation data would be fetched and string would change to whatever ran last e.g for creation, 'C' ; for editing, 'U'....
+    const [title, setTitle] = useState("");
 
     const handleClose = (event, reason) => {
-        if (reason && reason == "backdropClick"){
+        if (reason && reason == "backdropClick") {
             return;
-        }else{
+        } else {
             setIsModal(false);
             setPriceRuleId(null);
             setEdit(false);
@@ -82,33 +83,49 @@ function App() {
 
     const productsInTheOffer = (item) => {
         let filteredProductIds = new Set();
-      
-        if (Array.isArray(item.prerequisite_product_ids) && item.prerequisite_product_ids.length > 0) {
-          item.prerequisite_product_ids.forEach((id) => {
-            const productsWithPrereq = products.filter((product) => product.id === id);
-            productsWithPrereq.forEach((product) => filteredProductIds.add(product.id));
-          });
+
+        if (
+            Array.isArray(item.prerequisite_product_ids) &&
+            item.prerequisite_product_ids.length > 0
+        ) {
+            item.prerequisite_product_ids.forEach((id) => {
+                const productsWithPrereq = products.filter(
+                    (product) => product.id === id
+                );
+                productsWithPrereq.forEach((product) =>
+                    filteredProductIds.add(product.id)
+                );
+            });
         }
-      
-        if (Array.isArray(item.entitled_product_ids) && item.entitled_product_ids.length > 0) {
-          item.entitled_product_ids.forEach((id) => {
-            const productsWithEntitlement = products.filter((product) => product.id === id);
-            productsWithEntitlement.forEach((product) => filteredProductIds.add(product.id));
-          });
+
+        if (
+            Array.isArray(item.entitled_product_ids) &&
+            item.entitled_product_ids.length > 0
+        ) {
+            item.entitled_product_ids.forEach((id) => {
+                const productsWithEntitlement = products.filter(
+                    (product) => product.id === id
+                );
+                productsWithEntitlement.forEach((product) =>
+                    filteredProductIds.add(product.id)
+                );
+            });
         }
-      
-        const filteredProducts = products.filter((product) => filteredProductIds.has(product.id));
+
+        const filteredProducts = products.filter((product) =>
+            filteredProductIds.has(product.id)
+        );
         setFilteredProducts(filteredProducts);
-      
+
         setIsModal(true);
-      };      
+    };
 
     const saveEdit = async () => {
         await axios
             .put(`http://127.0.0.1:8000/api/priceRule/${priceRuleId}`, {
-                title: "edited_offer",
-                prerequisite_product_ids: [preRequisiteProductId],
-                entitled_product_ids: [entitledProductId],
+                title: title,
+                prerequisite_product_ids: preRequisiteProductId,
+                entitled_product_ids: entitledProductId,
                 starts_at: startTime,
                 ends_at: endTime,
             })
@@ -146,8 +163,12 @@ function App() {
                                             onClick={() => {
                                                 productsInTheOffer(item);
                                                 setPriceRuleId(item.id);
-                                                setPreRequisiteProductId(item.prerequisite_product_ids);
-                                                setEntitledProductId(item.entitled_product_ids);
+                                                setPreRequisiteProductId(
+                                                    item.prerequisite_product_ids
+                                                );
+                                                setEntitledProductId(
+                                                    item.entitled_product_ids
+                                                );
                                             }}
                                         >
                                             {" "}
@@ -237,8 +258,9 @@ function App() {
                                                 <TableCell>Product</TableCell>
                                                 <TableCell>Tag</TableCell>
                                                 <TableCell>Status</TableCell>
-                                                <TableCell>Discounted</TableCell>
-
+                                                <TableCell>
+                                                    Discounted
+                                                </TableCell>
                                             </TableRow>
                                         </TableHead>
                                     ) : (
@@ -266,7 +288,15 @@ function App() {
                                                     <TableCell>
                                                         {product.status}
                                                     </TableCell>
-                                                    <TableCell>{entitledProductId.includes(product.id) ? <div>Yes</div> : <div>No</div>}</TableCell>
+                                                    <TableCell>
+                                                        {entitledProductId.includes(
+                                                            product.id
+                                                        ) ? (
+                                                            <div>Yes</div>
+                                                        ) : (
+                                                            <div>No</div>
+                                                        )}
+                                                    </TableCell>
                                                 </TableRow>
                                             ))}
                                         </TableBody>
@@ -286,6 +316,17 @@ function App() {
                                                 </TableRow>
                                             ))}
                                             <TableRow>
+                                                <TableCell>
+                                                    Title: {" "}
+                                                    <input
+                                                        type="text"
+                                                        onChange={(e) => {
+                                                            setTitle(
+                                                                e.target.value
+                                                            );
+                                                        }}
+                                                    />
+                                                </TableCell>
                                                 <TableCell>
                                                     Start Time:{" "}
                                                     <input
