@@ -69,11 +69,9 @@ function App() {
     }, []);
 
     const deleteOffer = (offer) => {
-        console.log(offer);
         axios
             .delete(`http://127.0.0.1:8001/api/priceRule/${offer.id}`)
             .then((response) => {
-                console.log("Delete Response", response);
                 if (priceRuleAltered == "D") {
                     setPriceRuleAltered("d");
                 } else {
@@ -83,32 +81,27 @@ function App() {
     };
 
     const productsInTheOffer = (item) => {
-        let prereqObj = [];
-        if (
-            Array.isArray(item.prerequisite_product_ids) &&
-            item.prerequisite_product_ids.length > 0
-        ) {
-            const prereqProduct = products.filter(
-                (product) => product.id === item?.prerequisite_product_ids[0]
-            );
-            console.log("prereq ", prereqProduct);
-            prereqObj = [...filteredProducts, prereqProduct[0]];
+        let filteredProductIds = new Set();
+      
+        if (Array.isArray(item.prerequisite_product_ids) && item.prerequisite_product_ids.length > 0) {
+          item.prerequisite_product_ids.forEach((id) => {
+            const productsWithPrereq = products.filter((product) => product.id === id);
+            productsWithPrereq.forEach((product) => filteredProductIds.add(product.id));
+          });
         }
-
-        if (
-            Array.isArray(item.entitled_product_ids) &&
-            item.entitled_product_ids.length > 0
-        ) {
-            const entitledProduct = products.filter(
-                (product) => product.id === item?.entitled_product_ids[0]
-            );
-            console.log("entite ", entitledProduct);
-            setFilteredProducts([...prereqObj, entitledProduct[0]]);
+      
+        if (Array.isArray(item.entitled_product_ids) && item.entitled_product_ids.length > 0) {
+          item.entitled_product_ids.forEach((id) => {
+            const productsWithEntitlement = products.filter((product) => product.id === id);
+            productsWithEntitlement.forEach((product) => filteredProductIds.add(product.id));
+          });
         }
-
-        console.log("filtered", products, item, filteredProducts);
+      
+        const filteredProducts = products.filter((product) => filteredProductIds.has(product.id));
+        setFilteredProducts(filteredProducts);
+      
         setIsModal(true);
-    };
+      };      
 
     const saveEdit = async () => {
         await axios
@@ -120,7 +113,6 @@ function App() {
                 ends_at: endTime,
             })
             .then((response) => {
-                console.log("response is: ", response);
                 if (priceRuleAltered == "U") {
                     setPriceRuleAltered("u");
                 } else {
@@ -132,8 +124,6 @@ function App() {
                 setIsModal(false);
             });
     };
-
-    console.log(filteredProducts, "filteredProducts");
 
     return (
         <div className="App container">
@@ -154,7 +144,6 @@ function App() {
                                     <td>
                                         <Button
                                             onClick={() => {
-                                                console.log("items", item);
                                                 productsInTheOffer(item);
                                                 setPriceRuleId(item.id);
                                                 setPreRequisiteProductId(item.prerequisite_product_ids);
@@ -248,6 +237,8 @@ function App() {
                                                 <TableCell>Product</TableCell>
                                                 <TableCell>Tag</TableCell>
                                                 <TableCell>Status</TableCell>
+                                                <TableCell>Discounted</TableCell>
+
                                             </TableRow>
                                         </TableHead>
                                     ) : (
@@ -275,6 +266,7 @@ function App() {
                                                     <TableCell>
                                                         {product.status}
                                                     </TableCell>
+                                                    <TableCell>{entitledProductId.includes(product.id) ? <div>Yes</div> : <div>No</div>}</TableCell>
                                                 </TableRow>
                                             ))}
                                         </TableBody>

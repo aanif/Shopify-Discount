@@ -22,13 +22,27 @@ export default function AddOffer(props) {
     const { products, setPriceRuleAltered, priceRuleAltered } = props;
     const [open, setOpen] = React.useState(false);
     const [title, setTitle] = React.useState("");
-    const [preReqProd, setPreReqProd] = React.useState([]);
-    const [entitledProd, setEntitledProd] = React.useState([]);
     const [startTime, setStartTime] = React.useState("");
     const [endTime, setEndTime] = React.useState("");
-    const [selectedProductId, setSelectedProductId] = React.useState(null);
-    const [selectedGiftProductId, setSelectedGiftProductId] =
-        React.useState(null);
+    const [selectedProductIds, setselectedProductIds] = React.useState([]);
+    const [selectedGiftProductIds, setSelectedGiftProductIds] = React.useState([]);
+
+    const toggleProductSelection = (productId, setselectedProductIds) => {
+        if (selectedProductIds.includes(productId)) {
+          setselectedProductIds(selectedProductIds.filter((id) => id !== productId));
+        } else {
+          setselectedProductIds([...selectedProductIds, productId]);
+        }
+      };
+
+    const toggleGiftProductSelection = (productId, setSelectedGiftProductIds) => {
+        if (selectedGiftProductIds.includes(productId)) {
+            setSelectedGiftProductIds(selectedGiftProductIds.filter((id) => id !== productId));
+        } else {
+            setSelectedGiftProductIds([...selectedGiftProductIds, productId]);
+        }
+      };
+    
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -51,13 +65,12 @@ export default function AddOffer(props) {
         await axios
             .post("http://127.0.0.1:8000/api/priceRule", {
                 title: title,
-                prerequisite_product_ids: [selectedProductId],
-                entitled_product_ids: [selectedGiftProductId],
+                prerequisite_product_ids: selectedProductIds,
+                entitled_product_ids: selectedGiftProductIds,
                 starts_at: startTime,
                 ends_at: endTime,
             })
             .then((response) => {
-                console.log("response is: ", response);
                 if (priceRuleAltered == "C") {
                     setPriceRuleAltered("c");
                 } else {
@@ -134,45 +147,51 @@ export default function AddOffer(props) {
                     </ListItem>
                     <Divider />
                     <div style={{ display: "flex" }}>
-                        <div style={{ flex: 1 }}>
-                            <Typography
-                                sx={{ marginX: 3, marginY: 3, fontSize: 20 }}
-                            >
-                                Eligible Products
-                            </Typography>
-                            {products.map((product) => (
-                                <ListItem key={product.id}>
-                                    <Radio
-                                        checked={
-                                            selectedProductId === product.id
-                                        }
-                                        onClick={() =>
-                                            setSelectedProductId(product.id)
-                                        }
-                                    />
-                                    <ListItemText primary={product.title} />
-                                </ListItem>
-                            ))}
+                    <div style={{ flex: 1 }}>
+                        <Typography
+                            sx={{ marginX: 3, marginY: 3, fontSize: 20 }}
+                        >
+                            Eligible Products
+                        </Typography>
+                        {products.map((product) => (
+                            <ListItem key={product.id}>
+                                <Radio
+                                    checked={selectedProductIds.includes(
+                                        product.id
+                                    )}
+                                    onClick={() =>
+                                        toggleProductSelection(
+                                            product.id,
+                                            setselectedProductIds
+                                        )
+                                    }
+                                />
+                                <ListItemText primary={product.title} />
+                            </ListItem>
+                        ))}
                         </div>
                         <div style={{ flex: 1 }}>
-                            <Typography
-                                sx={{ marginX: 3, marginY: 3, fontSize: 20 }}
-                            >
-                                Gift Products
-                            </Typography>
-                            {products.map((product) => (
-                                <ListItem key={product.id}>
-                                    <Radio
-                                        checked={
-                                            selectedGiftProductId === product.id
-                                        }
-                                        onClick={() =>
-                                            setSelectedGiftProductId(product.id)
-                                        }
-                                    />
-                                    <ListItemText primary={product.title} />
-                                </ListItem>
-                            ))}
+                        <Typography
+                            sx={{ marginX: 3, marginY: 3, fontSize: 20 }}
+                        >
+                            Gift Products
+                        </Typography>
+                        {products.map((product) => (
+                            <ListItem key={product.id}>
+                                <Radio
+                                    checked={selectedGiftProductIds.includes(
+                                        product.id
+                                    )}
+                                    onClick={() =>
+                                        toggleGiftProductSelection(
+                                            product.id,
+                                            setSelectedGiftProductIds
+                                        )
+                                    }
+                                />
+                                <ListItemText primary={product.title} />
+                            </ListItem>
+                        ))}
                         </div>
                     </div>
                 </List>
